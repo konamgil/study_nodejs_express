@@ -32,7 +32,7 @@ http.createServer(function (req,res) {
             res.writeHead(200,{'Content-Type':'text/plain'});
             res.end('About')
             break;
-        case '/src/index.html':
+        case '/public/index.html':
             serveStaticFile(res,'/src/index.html');
             break;
         default:

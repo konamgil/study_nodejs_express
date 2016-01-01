@@ -22,5 +22,13 @@
   "license": "MIT",
   "directories": {
     "test": "test"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konamgil/study_nodejs_express.git"
+  },
+  "bugs": {
+    "url": "https://github.com/konamgil/study_nodejs_express/issues"
+  },
+  "homepage": "https://github.com/konamgil/study_nodejs_express#readme"
 }
