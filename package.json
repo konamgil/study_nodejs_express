@@ -1,0 +1,26 @@
+{
+  "name": "i_love_node_js",
+  "version": "0.0.1",
+  "description": "namgil's test project for devStudy",
+  "main": "meadowlark.js",
+  "author": "konamgil",
+  "dependencies": {
+    "express-handlebars": "^2.0.1"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "express": "^4.13.3",
+    "mocha": "^2.3.4"
+  },
+  "scripts": {
+    "test": "mocha test/ --reporter nyan"
+  },
+  "keywords": [
+    "nodejs",
+    "mocha"
+  ],
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  }
+}
