@@ -1,14 +1,27 @@
 var express = require('express');
 var app = express();
-var handlebars = require("express-handlebars").create({ defaultLayout:'main'});
+var fortune = require("./lib/fortune")
 
-//정적파일 미들웨어
-app.use(express.static(__dirname + '/public'));
+var handlebars = require("express-handlebars").create({
+    defaultLayout:'main'
+});
+// set up handlebars view engine
 app.engine('handlebars', handlebars.engine);
 app.set('view engine','handlebars');
 
 //port setting
-app.set('port',process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3000);
+
+//정적파일 미들웨어
+app.use(express.static(__dirname + '/public'));
+
+// set 'showTests' context property if the querystring contains test=1
+app.use(function(req, res, next) {
+    res.locals.showTests = app.get('env') !== 'production' &&
+      req.query.test === '1';
+    console.log("request : " + req.locals);
+    next();
+});
 
 app.get('/', function (req, res) {
     // handlebars을 사용전
@@ -20,8 +33,9 @@ app.get('/', function (req, res) {
 app.get('/about', function(req, res) {
     // res.type('text/plain');
     // res.send('About Meadowlark Travel')
-    var randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-    res.render('about', { fortune : randomFortune});
+    res.render('about', { 
+        fortune : fortune.getFortune()
+    });
 });
 // 404 폴백 핸들러 (미들웨어)
 app.use(function (req, res, next) {
@@ -41,13 +55,7 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(app.get('port'), function () {
-   console.log( 'Express started on http://localhost:' + app.get('port') + '; press Ctrl + C to terminate');
+   console.log( 'Express started on http://localhost:' +
+   app.get('port') + '; press Ctrl + C to terminate');
 });
 
-var fortunes = [
-    "Couquer your fears or they will conquer you.",
-    "Rivers need springs.",
-    "Do not fear what you don't know.,",
-    "You will have a pleasant surprise.",
-    "Whenever possible, keep it simple.",
-    ];

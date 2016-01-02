@@ -5,11 +5,11 @@
   "main": "meadowlark.js",
   "author": "konamgil",
   "dependencies": {
+    "express": "^4.13.3",
     "express-handlebars": "^2.0.1"
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "express": "^4.13.3",
     "mocha": "^2.3.4"
   },
   "scripts": {
