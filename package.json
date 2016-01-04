@@ -14,7 +14,8 @@
     "zombie": "^4.2.1"
   },
   "scripts": {
-    "test": "mocha test/ --reporter nyan"
+    "test": "mocha test/ --reporter nyan",
+    "start" : "node meadowlark.js"
   },
   "keywords": [
     "nodejs",
