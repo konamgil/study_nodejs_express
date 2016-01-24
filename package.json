@@ -5,17 +5,23 @@
   "main": "meadowlark.js",
   "author": "konamgil",
   "dependencies": {
+    "body-parser": "^1.14.2",
     "express": "^4.13.3",
-    "express-handlebars": "^2.0.1"
+    "express-handlebars": "^2.0.1",
+    "formidable": "^1.0.17"
   },
   "devDependencies": {
     "chai": "^3.4.1",
+    "grunt": "^0.4.5",
+    "grunt-cafe-mocha": "^0.1.13",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-exec": "^0.4.6",
     "mocha": "^2.3.4",
     "zombie": "^4.2.1"
   },
   "scripts": {
     "test": "mocha test/ --reporter nyan",
-    "start" : "node meadowlark.js"
+    "start": "node meadowlark.js"
   },
   "keywords": [
     "nodejs",

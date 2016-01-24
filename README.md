@@ -11,3 +11,5 @@
 
 ###Cross page test
 $ mocha -u tdd -R spec qa/tests-crosspage.js
+###Unit test
+$ mocha -u tdd -R spec qa/test-unit.js
