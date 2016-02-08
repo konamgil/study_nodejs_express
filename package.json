@@ -6,9 +6,13 @@
   "author": "konamgil",
   "dependencies": {
     "body-parser": "^1.14.2",
+    "cookie-parser": "^1.4.1",
     "express": "^4.13.3",
     "express-handlebars": "^2.0.1",
-    "formidable": "^1.0.17"
+    "express-session": "^1.13.0",
+    "formidable": "^1.0.17",
+    "jquery-file-upload-middleware": "^0.1.7",
+    "request": "^2.69.0"
   },
   "devDependencies": {
     "chai": "^3.4.1",
