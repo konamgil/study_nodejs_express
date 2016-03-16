@@ -8,7 +8,7 @@ var express = require('express'),
 var app = express();
 
 var credentials = require('./credentials.js');
-
+var emailService = require('./lib/email.js')(credentials);
 
 var handlebars = require("express-handlebars").create({
     defaultLayout:'main',
@@ -180,7 +180,7 @@ app.post('/newsletter', function(req, res){
 	var name = req.body.name || '', email = req.body.email || '';
 	// input validation
 	if(!email.match(VALID_EMAIL_REGEX)) {
-		if(req.xhr) return res.json({ error: 'Invalid name email address.' });
+		if(req.xhr) {return res.json({ error: 'Invalid name email address.' });}
 		req.session.flash = {
 			type: 'danger',
 			intro: 'Validation error!',
@@ -190,7 +190,7 @@ app.post('/newsletter', function(req, res){
 	}
 	new NewsletterSignup({ name: name, email: email }).save(function(err){
 		if(err) {
-			if(req.xhr) return res.json({ error: 'Database error.' });
+			if(req.xhr){ return res.json({ error: 'Database error.' });}
 			req.session.flash = {
 				type: 'danger',
 				intro: 'Database error!',
@@ -198,7 +198,7 @@ app.post('/newsletter', function(req, res){
 			};
 			return res.redirect(303, '/newsletter/archive');
 		}
-		if(req.xhr) return res.json({ success: true });
+		if(req.xhr){ return res.json({ success: true });}
 		req.session.flash = {
 			type: 'success',
 			intro: 'Thank you!',
@@ -240,6 +240,63 @@ app.post('/contest/vacation-photo/:year/:month', function(req, res) {
        res.redirect(303,'/thank-you');
    });
 });
+var cartValidation = require('./lib/cartValidation.js');
+
+app.use(cartValidation.checkWaivers);
+app.use(cartValidation.checkGuestCounts);
+
+app.post('/cart/add', function(req, res, next){
+	var cart = req.session.cart || (req.session.cart = { items: [] });
+	nProduct.findOne({ sku: req.body.sku }, function(err, product){
+		if(err){ return next(err);}
+		if(!product){ return next(new Error('Unknown product SKU: ' + req.body.sku));}
+		cart.items.push({
+			product: product,
+			guests: req.body.guests || 0,
+		});
+		res.redirect(303, '/cart');
+	});
+});
+app.get('/cart', function(req, res, next){
+	var cart = req.session.cart;
+	if(!cart){ next();}
+	res.render('cart', { cart: cart });
+});
+app.get('/cart/checkout', function(req, res, next){
+	var cart = req.session.cart;
+	if(!cart){ next();}
+	res.render('cart-checkout');
+});
+app.get('/cart/thank-you', function(req, res){
+	res.render('cart-thank-you', { cart: req.session.cart });
+});
+app.get('/email/cart/thank-you', function(req, res){
+	res.render('email/cart-thank-you', { cart: req.session.cart, layout: null });
+});
+app.post('/cart/checkout', function(req, res) {
+    var cart = req.session.cart;
+	if(!cart){
+	    next(new Error('Cart does not exist.'));
+	}
+	var name = req.body.name || '', email = req.body.email || '';
+	// input validation
+	if(!email.match(VALID_EMAIL_REGEX)){ return res.next(new Error('Invalid email address.'));}
+	// assign a random cart ID; normally we would use a database ID here
+	cart.number = Math.random().toString().replace(/^0\.0*/, '');
+	cart.billing = {
+		name: name,
+		email: email,
+	};
+    res.render('email/cart-thank-you', 
+    	{ layout: null, cart: cart }, function(err,html){
+	        if( err ){ console.log('error in email template');}
+	        emailService.send(cart.billing.email,
+	        	'Thank you for booking your trip with Meadowlark Travel!',
+	        	html);
+	    }
+    );
+    res.render('cart-thank-you', { cart: cart });
+});
 // error page 처리 -----------------
 
 // 404 폴백 핸들러 (미들웨어)
@@ -262,8 +319,23 @@ app.use(function(err, req, res, next) {
     
 });
 
-app.listen(app.get('port'), function () {
-   console.log( 'Express started on http://localhost:' +
-   app.get('port') + '; press Ctrl + C to terminate');
-});
+// app.listen(app.get('port'), function () {
+//   console.log( 'Express started on http://localhost:' +
+//   app.get('port') + '; press Ctrl + C to terminate');
+// });
 
+function startServer() {
+    app.listen(app.get('port'), function(){
+        console.log('Express started in ' + app.get('env') + 
+        ' mode on http://localhost:' + app.get('port') + 
+        '; press Ctrl-c to terminate.');
+    });
+}
+if(require.main === module){
+    // 애플리케이션은 앱 서버를 시동해 직접 실행됩니다.
+    startServer();
+}else{
+    //require를 통해 애플리케이션을 모듈처럼 가져옵니다.
+    // 함수를 반환해서 ㅂ서버를 생성합니다.
+    module.exports = startServerL;
+}
