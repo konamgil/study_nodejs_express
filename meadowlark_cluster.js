@@ -1,4 +1,4 @@
-var cluster = require("cluster");
+var cluster = require("cluster");  
 function startServer() {
     var worker = cluster.Worker();
     console.log('CLUSTER: Worker %d started', worker.id);
